@@ -338,6 +338,98 @@ If the query does not adhere to these points, either it gives syntax error or it
 -------------------------------------------------------------------------------------------------------------------
 select to_char(sldate,'Month') MONTH, count(*) NUMBER_SALE from sale group by to_char(sldate,'Month') order by  2 desc
 -------------------------------------------------------------------------------------------------------------------------------
+
+   A                           B
+aid   name                    bid   aid       data
+I001  A                       1     I002      Hello
+I002  B                       2     I001      Hi
+I003  C                       3     I003      Bye
+
+CROSS JOIN
+aid    name      bid    data
+I001   A         1      Hello
+I001   A         2      Hi
+I001   A         3      Bye
+I002   B         1      Hello
+I002   B         2      Hi
+I002   B         3      Bye             
+I003   C         1      Hello
+I003   C         2      Hi
+I003   C         3      Bye   
+
+INNER JOIN          
+aid    name      bid    data
+I001   A         2      Hi
+I002   B         1      Hello
+I003   C         3      Bye
+
+Many employees working in the same project
+
+employees                                                    project
+empid    name   basic  projid                         id       descr      strength              
+E0001    Ravi   23000  P001                           P001     Insurance  100
+E0002    Suresh 21000  P001                           P002     Banking    100
+E0003    Ratan  2000   P002
+
+Display employeeid,name,basic,projid,desc
+
+SELECT e.empid,e.name,e,basic,e.projid,p.descr
+FROM employee e INNER JOIN project p
+ON e.projid=p.id
+
+Do we have any other way writing which means can we skip the alias name while
+mentioning the columns?
+A: In the above case , YES.
+
+SELECT empid,name,basic,projid,descr
+FROM employee  INNER JOIN project 
+ON projid=id
+
+When we have to give the alias name for the table and where we use?
+employees                                                    project
+empid    name   basic  id                             id       descr      strength              
+E0001    Ravi   23000  P001                           P001     Insurance  100
+E0002    Suresh 21000  P001                           P002     Banking    100
+E0003    Ratan  2000   P002
+
+The below SQL command will show error as it will say id ambigous.
+
+SELECT empid,name,basic,id,descr
+FROM employee  INNER JOIN project 
+ON  id=id
+
+
+The below syntax is correct as we have used aliasing for the table and we have id
+column which is present in both employees and project table
+
+
+SELECT empid,name,basic,emp.id,descr
+FROM employee emp INNER JOIN project proj 
+ON  emp.id=proj.id
+
+OR
+
+SELECT empid,name,basic,proj.id,descr
+FROM employee emp INNER JOIN project proj 
+ON  emp.id=proj.id
+
+OR
+
+SELECT empid,name,basic,emp.id,descr
+FROM employee emp JOIN project proj 
+ON  emp.id=proj.id
+
+empid    name   basic  id        desc
+E0001    Ravi   23000  P001      Insurance
+E0002    Suresh 21000  P001      Insurance
+E0003    Ratan  20000  P002      Banking
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
 SELECT id,ename,compid,model
 FROM employee INNER JOIN computer
 ON employee.compid=computer.compid 
