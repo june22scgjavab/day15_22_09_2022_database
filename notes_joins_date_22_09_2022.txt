@@ -1,0 +1,185 @@
+CREATE TABLE customerdetails(
+   custid VARCHAR2(5),
+   firstname VARCHAR2(30) NOT NULL,
+   middlename VARCHAR2(30),
+   lastname VARCHAR2(30) NOT NULL,
+   city VARCHAR2(30) NOT NULL,
+   state VARCHAR2(30) NOT NULL,
+   CONSTRAINT customerdetails_custid_pk PRIMARY KEY(custid),
+   CONSTRAINT customerdetails_custid_chk CHECK ( custid LIKE 'C%')
+  );
+
+
+  INSERT INTO customerdetails VALUES('C0001','Suresh',NULL,'Chandra','Chennai','TN');
+  INSERT INTO customerdetails VALUES('C0002','Ravish','Kumar','Gupta','Patna','Bihar');
+  INSERT INTO customerdetails VALUES('C0003','Nitin',null,'Kumar','Gaya','Bihar');
+  INSERT INTO customerdetails VALUES('C0004','Arnab','Kumar','Dutta','Kolkata','WB');
+  INSERT INTO customerdetails VALUES('C0005','Jullie',null,'Desouza','Coimbatore','TN');
+  INSERT INTO customerdetails VALUES('C0006','Sangeet',null,'Madhavan','Chennai','TN');
+  INSERT INTO customerdetails VALUES('C0007','Dhiman',null,'Ganguly','Durgapur','WB');
+  INSERT INTO customerdetails VALUES('C0008','Natasha',null,'Daniel','Salem','TN');
+  INSERT INTO customerdetails VALUES('C0009','Asha','Rani','Gupta','Patna','Bihar');
+  INSERT INTO customerdetails VALUES('C0010','Mani','Kant','Sharma','Muzzafarpur','Bihar');
+
+
+  
+ CREATE TABLE itemdetails(
+   itemid VARCHAR2(5),
+   description VARCHAR2(20) NOT NULL,
+   price INTEGER,
+   qoh INTEGER,
+   category VARCHAR2(20),
+   CONSTRAINT itemdetails_itemid_pk PRIMARY KEY(itemid),
+   CONSTRAINT itemdetails_price_chk CHECK ( price>0),
+   CONSTRAINT itemdetails_qoh_chk CHECK (qoh>0),
+   CONSTRAINT itemdetails_category_chk CHECK (category IN('Cosmetics','Stationery','Garments'))
+   );
+
+
+  INSERT INTO itemdetails VALUES('I0001','Pen',20.45,100,'Stationery');
+  INSERT INTO itemdetails VALUES('I0002','Pencil',5.50,200,'Stationery');
+  INSERT INTO itemdetails VALUES('I0003','Eraser',2.30,230,'Stationery');
+  INSERT INTO itemdetails VALUES('I0004','Shirt',1000,400,'Garments');
+  INSERT INTO itemdetails VALUES('I0005','T-Shirt',900,400,'Garments');
+  INSERT INTO itemdetails VALUES('I0006','Perfume',600,400,'Cosmetics');
+  INSERT INTO itemdetails VALUES('I0007','Kajal Pencil',15.56,200,'Cosmetics');
+
+ 3145
+
+
+
+  CREATE TABLE purchase(
+    tranid VARCHAR2(5),
+    itemid VARCHAR2(5),
+    custid VARCHAR2(5),
+    dop DATE DEFAULT sysdate,
+    qtypur INTEGER,
+    CONSTRAINT purchase_tranid_pk PRIMARY KEY(tranid),
+    CONSTRAINT purchase_tranid_chk CHECK ( tranid LIKE 'T%'),
+    CONSTRAINT purchase_itemid_fk FOREIGN KEY(itemid) REFERENCES itemdetails(itemid),
+    CONSTRAINT purchase_custid_fk FOREIGN KEY(custid) REFERENCES customerdetails(custid),
+    CONSTRAINT purchase_qtypur_chk CHECK (qtypur>0)  
+
+  );
+
+
+
+  INSERT INTO purchase VALUES('T0001','I0001','C0003','12-Jul-2010',20);
+  INSERT INTO purchase VALUES('T0002','I0001','C0001','15-Aug-2015',20);
+  INSERT INTO purchase VALUES('T0003','I0003','C0004','23-Jan-2020',30);
+  INSERT INTO purchase VALUES('T0004','I0002','C0006','01-Feb-2016',10);
+  INSERT INTO purchase VALUES('T0005','I0004','C0006','01-Feb-2016',10);
+  INSERT INTO purchase VALUES('T0006','I0004','C0006','02-Jun-2020',30);
+
+
+Q . Display firstname,middlename for all the customerdetailss.
+Q . Display firstname for the customerdetailss from Tamilnadu.
+Q . Display firstname for the customerdetailss who are not from Tamilnadu.
+Q . Display the firstname,lastname for the customerdetailss who are not from Tamilnadu and West Bengal.
+Q. Count the number of customerdetailss from Bihar. Give the alias name as Count of customerdetails.
+Q. Count the number of customerdetailss statewise.
+Q. Count the number of customerdetailss statewise and citywise.
+Q. Display the state from which we have maximum number of customerdetailss.
+Q. Display the firstname of the customerdetails who are having middlename as NULL.
+Q. Display the first where name starts with A and followed by tha we have only 3 characters.
+Q. Count the number of customerdetailss who don't have middlename.
+Q. Display the state which is having the maximum number of customerdetailss.
+Q. Display the state which is having the maximum number of customerdetails and minimum number of customerdetailss.
+Q. Display the itemdetailsname which is having maximum price.
+Q. Count the number of itemdetailss categorywise.
+Q. Display the category where the investement is highest.
+Q. Display the itemdetails which is never purchased by any customerdetails.
+Q. Display the itemdetails which is transacted multiple times. 
+Q. display the itemdetailsid,itemdetailsname for the itemdetailss which were transacted in the month of February.
+Q. Display the itemdetailsid,itemdetailsname which were transacted between the year 2015 and 2020.(Inclusive)
+Q. Count the number of itemdetailss transacted in the month of February.
+Q. Display the customerdetails name whose transaction is most.
+Q. display itemdetailsid,itemdetailsname,customerdetailsid, customerdetailsname and dop. Sort on date. 
+Q. display the customerdetails name who purchased the itemdetails on today's date.
+--------------------------------------------------------------------------------------------------------------------------------------
+Display the itemid itemname for the items which were purchased and having maximum price.
+select i.itemid, itemdetailsname 
+from itemdetails i JOIN Purchace p 
+on i.itemid=p.itemid 
+WHERE price=(select max(price)
+FROM itemdetails i JOIN purchase p
+ON i.itemid=p.itemid)
+
+Display the customerdetails's firstname who purchased the itemdetails with maximum price among the
+sold itemdetailss.
+
+select firstname 
+FROM customerdetails c JOIN purchase p 
+ON c.custid=p.custid 
+JOIN itemdetails i 
+ON i.itemid=p.itemid 
+WHERE price=(select max(price) FROM itemdetails i JOIN purchase p ON i.itemid=p.itemid)
+
+display the firstname and itemdetails description of the itemdetailss which were purchased in the year
+2010.
+
+select firstname,description
+FROM customerdetails,description 
+customerdetails c JOIN purchase p 
+ON c.custid=p.custid 
+JOIN itemdetails i ON 
+i.itemid=p.itemid 
+where TO_CHAR(dop,'YYYY')='2010'
+
+Q Display the category name which is having the highest number of itemdetails.
+SELECT category
+FROM itemdetails
+GROUP BY category
+HAVING count(itemid)=
+(SELECT max(count(itemid)) FROM itemdetails GROUP BY category)
+
+
+Q Display the itemid and description which were purchased between the years 2010 and 2015.
+ SELECT *
+  
+ SELECT i.itemid,description
+FROM itemdetails i  JOIN purchase p 
+ON i.itemid=p.itemid
+WHERE to_char(dop,'yyyy') between '2010' and '2015';
+
+
+ SELECT i.itemid,description
+FROM itemdetails i  JOIN purchase p 
+ON i.itemid=p.itemid
+WHERE to_char(dop,'yyyy') between 2010 and 2015;
+
+
+
+SELECT i.itemid,description
+FROM itemdetails i  JOIN purchase p 
+ON i.itemid=p.itemid
+WHERE to_char(dop,'yyyy')>=2010 and to_char(dop,'yyyy')<=2015;
+
+
+Q Display itemid,description,custid,firstname, year_of_purchase for the items purchased after 2015 display in descending order
+ of the year. 
+
+
+SELECT i.itemid,description,c.custid,firstname,to_char(dop,'yyyy') year
+FROM itemdetails i  JOIN purchase p 
+ON i.itemid=p.itemid
+JOIN customerdetails c
+ON c.custid=p.custid
+WHERE to_char(dop,'yyyy')>2015
+order by year desc
+
+
+ Display itemid,description,custid,firstname, year_of_purchase for the items purchased in the current year.
+
+
+SELECT i.itemid,description,c.custid,firstname,to_char(dop,'yyyy') year
+FROM itemdetails i JOIN purchase p 
+ON i.itemid=p.itemid
+JOIN customerdetails c
+ON c.custid=p.custid
+WHERE to_char(dop,'yyyy')=to_char(sysdate,'yyyy');
+
+
+
+ 
+
